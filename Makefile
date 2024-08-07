@@ -35,7 +35,7 @@ test.integration:
 	docker stop $$TEST_CONTAINER_NAME
 
 test:
-	go test --short -coverprofile=cover.out -v ./...
+	go test --short -coverprofile=coverage.out -v ./...
 	make test.coverage
 
 test.coverage:
