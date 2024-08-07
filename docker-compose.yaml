@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASS}
+    ports:
+      - "5555:5432"
+    volumes:
+      - './pgdata:/var/lib/postgresql/data'
+    restart: unless-stopped
+    networks:
+      - dev
+  app:
+    build: .
+    ports:
+      - '8080:8080'
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - dev
+    depends_on:
+      - db
+      - migrations
+  migrations:
+    image: migrate/migrate:latest
+    environment:
+        DB_PASSWORD: qwerty
+    env_file:
+      - .env
+    volumes:
+      - ./migrations:/migrations
+    command:
+      - "-path"
+      - "/migrations/"
+      - "-database"
+      - "postgres://postgres:qwerty@${PGHOST}:5555/postgres?sslmode=disable"
+      - "-verbose"
+      - "up"
+    depends_on:
+      - db
+    networks:
+      - dev
+
+networks:
+  dev:
+    driver: bridge

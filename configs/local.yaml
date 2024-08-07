@@ -1,0 +1,11 @@
+env: "local"
+
+http:
+    host: "localhost"
+    port: 8080
+    rd_timeout: 10s
+    wr_timeout: 10s
+    max_header_bytes: 1
+
+auth:
+    token_ttl: 36h

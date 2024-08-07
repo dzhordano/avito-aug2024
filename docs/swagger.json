@@ -1,0 +1,709 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Test API",
+        "contact": {}
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/",
+    "paths": {
+        "/auth/dummyLogin": {
+            "get": {
+                "description": "get token corresponding to dummy user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Dummy Login",
+                "operationId": "dummyLogin",
+                "parameters": [
+                    {
+                        "enum": [
+                            "client",
+                            "moderator"
+                        ],
+                        "type": "string",
+                        "description": "userType",
+                        "name": "userType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.authTokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "description": "login and get token corresponding to user type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User Login",
+                "operationId": "userLogin",
+                "parameters": [
+                    {
+                        "description": "User login info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UserLoginInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.authTokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "description": "register new user with email, password and userType",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User Register",
+                "operationId": "userRegister",
+                "parameters": [
+                    {
+                        "description": "User info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UserRegisterInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v1.userIdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/flat/create": {
+            "post": {
+                "security": [
+                    {
+                        "ClientsAuth": []
+                    },
+                    {
+                        "ModeratorsAuth": []
+                    }
+                ],
+                "description": "create flat with flatNumber, price, rooms and house id it belongs to",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flat"
+                ],
+                "summary": "Create flat",
+                "operationId": "createFlat",
+                "parameters": [
+                    {
+                        "description": "Flat info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.FlatCreateInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v1.dataResponse-domain_Flat"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/flat/update": {
+            "post": {
+                "security": [
+                    {
+                        "ModeratorsAuth": []
+                    }
+                ],
+                "description": "update flat status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flat"
+                ],
+                "summary": "Update flat",
+                "operationId": "updateFlat",
+                "parameters": [
+                    {
+                        "description": "Flat info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.FlatUpdateInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.dataResponse-domain_Flat"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/house/:id": {
+            "get": {
+                "security": [
+                    {
+                        "ClientsAuth": []
+                    },
+                    {
+                        "ModeratorsAuth": []
+                    }
+                ],
+                "description": "get all flats that are located at house",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "house"
+                ],
+                "summary": "Get House By Id",
+                "operationId": "getHouseById",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "house id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.dataResponse-array_domain_Flat"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/house/:id/subscribe": {
+            "post": {
+                "security": [
+                    {
+                        "ClientsAuth": []
+                    },
+                    {
+                        "ModeratorsAuth": []
+                    }
+                ],
+                "description": "subscribe user to house specifying his email in body",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "house"
+                ],
+                "summary": "Post Subscribe To House With Id",
+                "operationId": "postSubscribeToHouse",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "house id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User email to subscribe",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.HouseSubscribeInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/house/create": {
+            "post": {
+                "security": [
+                    {
+                        "ModeratorsAuth": []
+                    }
+                ],
+                "description": "create house with address, year and (perhaps) developer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "house"
+                ],
+                "summary": "Create House",
+                "operationId": "createHouse",
+                "parameters": [
+                    {
+                        "description": "House info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.HouseCreateInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v1.dataResponse-domain_House"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "domain.Flat": {
+            "type": "object",
+            "properties": {
+                "flatNumber": {
+                    "description": "TODO Есть условие \"номер квартиры\", но его почему-то нет в API.",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "rooms": {
+                    "type": "integer"
+                },
+                "status": {
+                    "$ref": "#/definitions/domain.Status"
+                }
+            }
+        },
+        "domain.House": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "developer": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.Status": {
+            "type": "string",
+            "enum": [
+                "created",
+                "approved",
+                "declined",
+                "moderating"
+            ],
+            "x-enum-varnames": [
+                "StatusCreated",
+                "StatusApproved",
+                "StatusDeclined",
+                "StatusOnModeration"
+            ]
+        },
+        "domain.UserType": {
+            "type": "string",
+            "enum": [
+                "client",
+                "moderator"
+            ],
+            "x-enum-varnames": [
+                "UserTypeClient",
+                "UserTypeModerator"
+            ]
+        },
+        "dtos.FlatCreateInput": {
+            "type": "object",
+            "required": [
+                "flat_number",
+                "house_id",
+                "price",
+                "rooms"
+            ],
+            "properties": {
+                "flat_number": {
+                    "description": "TODO same there.",
+                    "type": "integer"
+                },
+                "house_id": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "rooms": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dtos.FlatUpdateInput": {
+            "type": "object",
+            "required": [
+                "flat_id",
+                "status"
+            ],
+            "properties": {
+                "flat_id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "$ref": "#/definitions/domain.Status"
+                }
+            }
+        },
+        "dtos.HouseCreateInput": {
+            "type": "object",
+            "required": [
+                "address",
+                "year"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "developer": {
+                    "type": "string"
+                },
+                "year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dtos.HouseSubscribeInput": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.UserLoginInput": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.UserRegisterInput": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "userType"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "userType": {
+                    "$ref": "#/definitions/domain.UserType"
+                }
+            }
+        },
+        "v1.authTokenResponse": {
+            "type": "object",
+            "properties": {
+                "auth_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.dataResponse-array_domain_Flat": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Flat"
+                    }
+                }
+            }
+        },
+        "v1.dataResponse-domain_Flat": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.Flat"
+                }
+            }
+        },
+        "v1.dataResponse-domain_House": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.House"
+                }
+            }
+        },
+        "v1.response": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.userIdResponse": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ClientsAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        },
+        "ModeratorsAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

@@ -1,0 +1,464 @@
+basePath: /api/
+definitions:
+  domain.Flat:
+    properties:
+      flatNumber:
+        description: TODO Есть условие "номер квартиры", но его почему-то нет в API.
+        type: integer
+      id:
+        type: integer
+      price:
+        type: integer
+      rooms:
+        type: integer
+      status:
+        $ref: '#/definitions/domain.Status'
+    type: object
+  domain.House:
+    properties:
+      address:
+        type: string
+      createdAt:
+        type: string
+      developer:
+        type: string
+      id:
+        type: integer
+      updatedAt:
+        type: string
+      year:
+        type: integer
+    type: object
+  domain.Status:
+    enum:
+    - created
+    - approved
+    - declined
+    - moderating
+    type: string
+    x-enum-varnames:
+    - StatusCreated
+    - StatusApproved
+    - StatusDeclined
+    - StatusOnModeration
+  domain.UserType:
+    enum:
+    - client
+    - moderator
+    type: string
+    x-enum-varnames:
+    - UserTypeClient
+    - UserTypeModerator
+  dtos.FlatCreateInput:
+    properties:
+      flat_number:
+        description: TODO same there.
+        type: integer
+      house_id:
+        type: integer
+      price:
+        type: integer
+      rooms:
+        type: integer
+    required:
+    - flat_number
+    - house_id
+    - price
+    - rooms
+    type: object
+  dtos.FlatUpdateInput:
+    properties:
+      flat_id:
+        type: integer
+      status:
+        $ref: '#/definitions/domain.Status'
+    required:
+    - flat_id
+    - status
+    type: object
+  dtos.HouseCreateInput:
+    properties:
+      address:
+        type: string
+      developer:
+        type: string
+      year:
+        type: integer
+    required:
+    - address
+    - year
+    type: object
+  dtos.HouseSubscribeInput:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  dtos.UserLoginInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  dtos.UserRegisterInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      userType:
+        $ref: '#/definitions/domain.UserType'
+    required:
+    - email
+    - password
+    - userType
+    type: object
+  v1.authTokenResponse:
+    properties:
+      auth_token:
+        type: string
+    type: object
+  v1.dataResponse-array_domain_Flat:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/domain.Flat'
+        type: array
+    type: object
+  v1.dataResponse-domain_Flat:
+    properties:
+      data:
+        $ref: '#/definitions/domain.Flat'
+    type: object
+  v1.dataResponse-domain_House:
+    properties:
+      data:
+        $ref: '#/definitions/domain.House'
+    type: object
+  v1.response:
+    properties:
+      message:
+        type: string
+    type: object
+  v1.userIdResponse:
+    properties:
+      user_id:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  title: Test API
+paths:
+  /auth/dummyLogin:
+    get:
+      description: get token corresponding to dummy user
+      operationId: dummyLogin
+      parameters:
+      - description: userType
+        enum:
+        - client
+        - moderator
+        in: query
+        name: userType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.authTokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Dummy Login
+      tags:
+      - auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: login and get token corresponding to user type
+      operationId: userLogin
+      parameters:
+      - description: User login info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UserLoginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.authTokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: User Login
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: register new user with email, password and userType
+      operationId: userRegister
+      parameters:
+      - description: User info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UserRegisterInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v1.userIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: User Register
+      tags:
+      - auth
+  /flat/create:
+    post:
+      consumes:
+      - application/json
+      description: create flat with flatNumber, price, rooms and house id it belongs
+        to
+      operationId: createFlat
+      parameters:
+      - description: Flat info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.FlatCreateInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v1.dataResponse-domain_Flat'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - ClientsAuth: []
+      - ModeratorsAuth: []
+      summary: Create flat
+      tags:
+      - flat
+  /flat/update:
+    post:
+      consumes:
+      - application/json
+      description: update flat status
+      operationId: updateFlat
+      parameters:
+      - description: Flat info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.FlatUpdateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse-domain_Flat'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - ModeratorsAuth: []
+      summary: Update flat
+      tags:
+      - flat
+  /house/:id:
+    get:
+      consumes:
+      - application/json
+      description: get all flats that are located at house
+      operationId: getHouseById
+      parameters:
+      - description: house id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse-array_domain_Flat'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - ClientsAuth: []
+      - ModeratorsAuth: []
+      summary: Get House By Id
+      tags:
+      - house
+  /house/:id/subscribe:
+    post:
+      consumes:
+      - application/json
+      description: subscribe user to house specifying his email in body
+      operationId: postSubscribeToHouse
+      parameters:
+      - description: house id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User email to subscribe
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.HouseSubscribeInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - ClientsAuth: []
+      - ModeratorsAuth: []
+      summary: Post Subscribe To House With Id
+      tags:
+      - house
+  /house/create:
+    post:
+      consumes:
+      - application/json
+      description: create house with address, year and (perhaps) developer
+      operationId: createHouse
+      parameters:
+      - description: House info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.HouseCreateInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v1.dataResponse-domain_House'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - ModeratorsAuth: []
+      summary: Create House
+      tags:
+      - house
+securityDefinitions:
+  ClientsAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+  ModeratorsAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
