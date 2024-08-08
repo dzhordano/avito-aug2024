@@ -1,4 +1,5 @@
 ![build](https://github.com/dzhordano/avito-aug2024/actions/workflows/default.yml/badge.svg)
+![Coverage](https://img.shields.io/badge/Coverage-7.4%25-red)
 
 ## Problem & Solutions
     1. Отсутствие в API номера квартиры при вызове endpoint'a /flat/create.
