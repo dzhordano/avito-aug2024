@@ -23,14 +23,8 @@ migrate:
 init-db-test:
 	docker run --name=bootcampdb_test -e POSTGRES_PASSWORD=qwerty -p 5556:5432 -d postgres
 
-migrate-test:
-	migrate -database "postgresql://postgres:qwerty@172.21.0.1:5556/postgres?sslmode=disable" -source "file://migrations" up
-
-
 export TEST_CONTAINER_NAME=bootcampdb_test
 test.integration:
-	make migrate-test
-
 	GIN_MODE=release go test -v ./tests/
 	docker stop $$TEST_CONTAINER_NAME
 
